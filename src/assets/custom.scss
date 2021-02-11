@@ -1,0 +1,21 @@
+/* import only the necessary Bootstrap files */
+@import "../../node_modules/bootstrap/scss/variables"; 
+@import "../../node_modules/bootstrap/scss/functions";
+/* --- begin customization ---- */
+/* change the primary theme color to red */
+$theme-colors: (
+  primary: red
+);
+/* increase the width of the grid lg and xl breakpoints */
+$grid-breakpoints: (
+  lg: 1024px,
+  xl: 1366px
+);
+/* increase container width for the wider lg and xl breakpoints */
+$container-max-widths: (
+  lg: 1050px,
+  xl: 1400px
+);
+/* --- end customization ------ */
+/* finally, import Bootstrap to set the changes! */
+@import "bootstrap";
