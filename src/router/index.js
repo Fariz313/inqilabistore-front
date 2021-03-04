@@ -12,6 +12,7 @@ import Detail from '../views/Detail.vue'
 import RegStore from '../views/Store/RegStore.vue'
 import StoreDashboard from '../views/Store/StoreDashboard.vue'
 import Cart from '../views/order/Cart.vue'
+import Order from '../views/order/Order.vue'
 
 Vue.use(VueRouter)
 
@@ -88,6 +89,11 @@ const routes = [
     path: '/cart',
     name: 'Cart',
     components: {default:Cart, nav: Nav}
+  },
+  {
+    path: '/order',
+    name: 'Order',
+    components: {default:Order, nav: Nav}
   },
 ]
 

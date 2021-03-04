@@ -27,8 +27,9 @@
               <input
                 type="search"
                 placeholder="Cari Kitab Komik Filsuf Muslim"
+                v-model="search"
               />
-              <button><img src="/icon/search.png" /></button>
+              <button v-on:click="tosearch"><img src="/icon/search.png" /></button>
             </div>
           </div>
           <router-link class="mx-3" to="/cart"> <img src="/icon/cart.png" /></router-link>
@@ -203,6 +204,7 @@ export default {
     return {
       isLoggedIn: false,
       name: "name",
+      search:"",
     };
   },
   methods: {
@@ -213,7 +215,17 @@ export default {
         .catch((err) => {
           location.href = "/"});
       
+    },
+    tosearch(){
+    if(this.search !== undefined || this.search !== null || this.search !== ""){
+      if(this.$router.currentRoute.path !== '/search'){
+        this.$router.push({ path: 'search', query: { search: this.search } });
+      }
+      else if(this.$router.query.search !== this.search){
+        window.href="/search?search="+this.search;
+      }
     }
+  }
   },
   mounted() {
     if (this.$store.getters.isLoggedIn) {
@@ -223,5 +235,6 @@ export default {
       }
     }
   },
+  
 };
 </script>

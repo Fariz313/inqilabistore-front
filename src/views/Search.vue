@@ -65,7 +65,8 @@ export default {
     return {
       book: [],
       genre: [],
-      genreGet: null,
+      genreGet: "",
+      search: "",
     };
   },
   methods:{
@@ -80,25 +81,30 @@ export default {
       return str.join('.');
     },
     getBook() {
-      if(this.genreGet !== null){
+      var bookurl = "book/s/book?";
+      if(this.$route.query.search !== undefined){
+        this.search = this.$route.query.search;
+      };
+      console.log(this.search);
+      // if(this.genreGet !== null){
         this.axios
-          .get("book/s/book?g="+this.genreGet)
+          .get("book/s/book?g="+this.genreGet+"&search="+this.search)
           .then((response) => {
             this.book = response.data.data.data;
           })
           .catch((err) => {
             console.log(err);
           });
-      }else{
-        this.axios
-          .get("book/s/book")
-          .then((response) => {
-            this.book = response.data.data.data;
-          })
-          .catch((err) => {
+      // }else{
+      //   this.axios
+      //     .get("book/s/book")
+      //     .then((response) => {
+      //       this.book = response.data.data.data;
+      //     })
+      //     .catch((err) => {
 
-          });
-      }
+      //     });
+      // }
     },
     getGenre() {
       this.axios
@@ -121,6 +127,7 @@ export default {
   mounted(){
     this.getBook();
     this.getGenre();
+    
   }
 };
 </script>

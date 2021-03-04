@@ -13,6 +13,7 @@ Vue.use(VueAxios, axios)
 axios.defaults.baseURL = 'http://localhost:8000/api'
 Vue.use(BootstrapVue);
 
+
 new Vue({
   router,
   store,
@@ -37,7 +38,8 @@ new Vue({
       },
   },
   mounted(){
-    this.isAuthenticate()
+    this.isAuthenticate();
+    axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
   },
   render: h => h(App)
 }).$mount('#app')
