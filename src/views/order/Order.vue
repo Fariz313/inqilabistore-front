@@ -11,38 +11,39 @@
                 <li class="list-group-item" v-for="(item,index) in order.data" :key="index">
                     <div class="row m-0 mb-3 d-flex justify-content-between">
                       <p>{{item.created_at}}</p>
-                      <p class="text-warning"> <span class="badge badge-warning">PENDING</span> </p>
+                      <p class="text-warning"> <span class="badge badge-info">{{item.status | capitalize}}</span> </p>
                     </div> 
                     <div class="row m-0 d-flex justify-content-between">
-                        <p class="text-muted invoice">INVOICE : <span class="text-dark">142102531152-kv</span></p>
+                        <p class="text-muted invoice">INVOICE : <span class="text-dark">{{item.invoice}}</span></p>
                     </div>
                     <div class="row m-0 mb-3 d-flex justify-content-between">
-                        <p> <span class="text-scon">TOKO KEREN</span> (Kota Malang) | <span class="text-secondary">085707234923</span></p>
+                        <p> <span class="text-scon">{{item.store.store_name}}</span> ({{wilayah[item.store.kode_provinsi].regencies[item.store.kode_kota].name}}) | <span class="text-secondary">{{item.store.contact}}</span></p>
                     </div>
                     <div class="row m-0 d-flex justify-content-between">
                       <div class="col-6 pl-0 d-flex flex-column">
                         <div class="mb-1"> <p class="m-0 text-muted invoice">Alamat Pengirim</p> </div>
                         <div>
-                          Desa Ased, Kec Lowokwaru, Kota Malang
+                          {{wilayah[item.store.kode_provinsi].regencies[item.store.kode_kota].districts[item.store.kode_kecamatan].villages[item.store.kode_desa].name}}, {{wilayah[item.store.kode_provinsi].regencies[item.store.kode_kota].districts[item.store.kode_kecamatan].name}}, {{wilayah[item.store.kode_provinsi].regencies[item.store.kode_kota].name}}
                         </div>
                         <div class="small">
-                          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi tenetur velit molestias blanditiis sit neque, adipisci sed voluptas voluptatibus consectetur eos vel reiciendis eius vitae tempore tempora vero nostrum saepe!
+                          {{item.store.address}}
                         </div>
                         <div></div>
                       </div>
                       <div class="col-6 pl-0 mb-3 d-flex flex-column">
                         <div class="mb-1"> <p class="m-0 text-muted invoice ">Alamat Penerima</p> </div>
                         <div>
-                          Desa Ased, Kec Lowokwaru, Kota Malang
+                          {{wilayah[item.address.kode_provinsi].regencies[item.address.kode_kota].districts[item.address.kode_kecamatan].villages[item.address.kode_desa].name}}, {{wilayah[item.address.kode_provinsi].regencies[item.address.kode_kota].districts[item.address.kode_kecamatan].name}}, {{wilayah[item.address.kode_provinsi].regencies[item.address.kode_kota].name}}
                         </div>
                         <div class="small">
-                          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi tenetur velit molestias blanditiis sit neque, adipisci sed voluptas voluptatibus consectetur eos vel reiciendis eius vitae tempore tempora vero nostrum saepe!
+                          {{item.address.alamat}}
                         </div>
                         <div></div>
                       </div>
                       <div class="row m-0 d-flex flex-column">
                         <div class="mb-1"> <p class="m-0 text-muted invoice">Resi</p> </div>
-                        <div>213213123123124213213124</div>
+                        <div v-if="resi">{{item.resi}}</div>
+                        <div v-else>-</div>
                       </div>
                     </div>
                     <div class="row m-0 d-flex justify-content-end">
@@ -58,12 +59,21 @@
   </div>
 </template>
 <script>
+import region from "./../../../indonesia-region.min.json";
 
 export default {
+  filters: {
+    capitalize: function (value) {
+      if (!value) return ''
+      value = value.toString()
+      return value.charAt(0).toUpperCase() + value.slice(1)
+    }
+  },
   data(){
     return{
       key:"",
       order:[],
+      wilayah:region,
     }
   },
   methods:{
@@ -81,12 +91,13 @@ export default {
         .catch((error) => {
           console.log(error);
         });
-    }
+    },
   },
   mounted(){
     this.key = localStorage.getItem("Authorization");
     this.axios.defaults.headers.common["Authorization"] = "Bearer " + this.key;
     this.getData();
+    snap.pay('81b98994-0b6f-4bc8-95ac-4d45224e1d2a');
   }
 }
 </script>
