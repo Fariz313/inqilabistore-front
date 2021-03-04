@@ -47,6 +47,12 @@ body{
 .bg-scon{
   background-color: #FF5904 !important;
 }
+.text-prim{
+  color: #4D9894 !important;
+}
+.text-scon{
+  color: #FF5904 !important;
+}
 .border-none{
   border: none !important;
 }

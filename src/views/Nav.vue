@@ -17,7 +17,7 @@
       <div class="row d-flex justify-content-center">
         <div class="col-md-2 col-sm-2 p-2">
           <router-link to="/">
-            <img class="logoimg" src="/Logo3.png/" />
+            <img class="logoimg" src="Logo3.png" />
           </router-link>
         </div>
         <div class="col-md-8 col-sm-10 d-flex align-items-center">
@@ -85,6 +85,7 @@
     </nav>
   </div>
 </template>
+
 <style lang="scss">
 .navcon {
   height: 32px;
