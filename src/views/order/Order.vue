@@ -97,7 +97,7 @@ export default {
     this.key = localStorage.getItem("Authorization");
     this.axios.defaults.headers.common["Authorization"] = "Bearer " + this.key;
     this.getData();
-    snap.pay('81b98994-0b6f-4bc8-95ac-4d45224e1d2a');
+    snap.pay('6ff4ec9c-02f1-42e6-bfe1-33510cf3ffea');
   }
 }
 </script>

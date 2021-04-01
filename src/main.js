@@ -7,10 +7,14 @@ import VueAxios from 'vue-axios'
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+import VuePhoneNumberInput from 'vue-phone-number-input';
+import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+ 
+Vue.component('vue-phone-number-input', VuePhoneNumberInput);
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
-axios.defaults.baseURL = 'http://localhost:8000/api'
+axios.defaults.baseURL = process.env.VUE_APP_ROOT_API   
 Vue.use(BootstrapVue);
 
 

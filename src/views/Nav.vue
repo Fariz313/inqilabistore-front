@@ -1,8 +1,8 @@
 <template>
   <div class="fixed-top bg-white shadow-sm">
-    <nav class="navbar navbar-light bg-prim py-0 navcon align-items-center">
+    <nav class="navbar navbar-light bg-prim py-0 navcon align-items-center d-none d-md-block">
       <div>
-        <a href="#" class="text-red">Ikuti Kami</a>
+        <a href="#" class="text-red">Ikuti Kami </a>
         <a href="#" class="iconmedsos"> <i class="fab fa-instagram"> </i> </a>
         <a href="#" class="iconmedsos"> <i class="fab fa-facebook"> </i> </a>
         <a href="#" class="iconmedsos"> <i class="fab fa-twitter"> </i> </a>

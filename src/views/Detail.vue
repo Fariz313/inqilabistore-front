@@ -94,7 +94,7 @@ export default {
     },
   methods: {
      getData(){
-      this.axios.get("/book/"+this.$route.params.id)
+      this.axios.get("/book"+this.$route.params.id)
       .then(response => {
         this.book = response.data
       })
@@ -106,7 +106,7 @@ export default {
         let conf = { headers: { Authorization: "Bearer " + this.key } };
       let form = new FormData();
       form.append("count", this.count);
-      this.axios.post("/cart/"+id,form,conf)
+      this.axios.post("/cart"+id,form,conf)
       .then(response => {
         console.log("berhasil");
       })

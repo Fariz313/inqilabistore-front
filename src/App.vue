@@ -24,17 +24,17 @@ html {
 body{
   font-family: 'Poppins', sans-serif !important;
 }
-@media (min-width: 576px) {
-  html {
-    font-size: 0.5rem;
-  }
-}
+// @media (min-width: 576px) {
+//   html {
+//     font-size: 0.5rem;
+//   }
+// }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 0.75rem;
-  }
-}
+// @media (min-width: 768px) {
+//   html {
+//     font-size: 0.75rem;
+//   }
+// }
 
 @media (min-width: 992px) {
   html {

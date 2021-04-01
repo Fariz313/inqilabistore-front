@@ -246,7 +246,7 @@ export default {
     getCart() {
       let conf = { headers: { Authorization: "Bearer " + this.key } };
       this.axios
-        .get("/cart/", conf)
+        .get("/cart", conf)
         .then((response) => {
           this.cart = response.data.data.data;
         })

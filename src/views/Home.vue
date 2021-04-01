@@ -17,11 +17,11 @@
           </div>
         </div>
         <hr/>
-        <div class="row">
+        <!-- <div class="row">
           <h2>Terlaris</h2>
         </div>
         <Tseller/>
-        <hr/>
+        <hr/> -->
         <h2>Buku Baru</h2>
         <Newbook
         v-bind:book="book"
@@ -58,7 +58,7 @@ export default {
   },
   methods:{
     getData(){
-      this.axios.get("/book/")
+      this.axios.get("/book")
       .then(response => {
         this.book  = response.data.data.data;
         console.log(response.data);
