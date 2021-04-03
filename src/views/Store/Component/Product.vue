@@ -9,30 +9,37 @@
       Tambahkan Produk
     </button>
     <div class="row">
-    <div v-for="(book,index) in book" :key="index" class="col-2 p-2">
-      <div v-on:click="detail(book.id)">
-        <img
-          v-if="book.photo !== null"
-          class="card-img-top"
-          :src="book.photo"
-          alt="Card image cap"
-        />
-        <img
-          v-else
-          class="card-img-top"
-          src="https://mdbootstrap.com/img/Photos/Horizontal/City/4-col/img%20(60).jpg"
-          alt="Card image cap"
-        />
-        <div class="card-body p-0">
-          <p class="card-title judul-buku">{{book.name}}</p>
-          <p><span class="badge badge-info mr-1" v-for="(it,indx) in book.genre_book" :key="indx">{{it.genre.genre}}</span> </p>
-          <p class="card-text">
-             <b>Rp {{commafy(book.price)}}</b>
-          </p>
+      <div v-for="(book, index) in book" :key="index" class="col-2 p-2">
+        <div v-on:click="detail(book.id)">
+          <img
+            v-if="book.photo !== null"
+            class="card-img-top"
+            :src="baseimg+book.photo"
+            alt="Card image cap"
+          />
+          <img
+            v-else
+            class="card-img-top"
+            src="https://mdbootstrap.com/img/Photos/Horizontal/City/4-col/img%20(60).jpg"
+            alt="Card image cap"
+          />
+          <div class="card-body p-0">
+            <p class="card-title judul-buku">{{ book.name }}</p>
+            <p>
+              <span
+                class="badge badge-info mr-1"
+                v-for="(it, indx) in book.genre_book"
+                :key="indx"
+                >{{ it.genre.genre }}</span
+              >
+            </p>
+            <p class="card-text">
+              <b>Rp {{ commafy(book.price) }}</b>
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
     <div
       class="modal fade bd-example-modal-lg"
       tabindex="-1"
@@ -55,12 +62,28 @@
           </div>
           <div class="modal-body">
             <form id="addBook" v-on:submit.prevent="submitBook">
+              <vue-upload-multiple-image
+                @upload-success="uploadImageSuccess"
+                @before-remove="beforeRemove"
+                @edit-image="editImage"
+                :data-images="images"
+                idUpload="myIdUpload"
+                editUpload="myIdEdit"
+                dragText="Drag images (many)"
+                browseText="(or) Select"
+                primaryText="Default"
+                markIsPrimaryText="Set as default"
+                popupText="This image will be displayed as default"
+                dropText="Drop your file here ..."
+                accept="image/gif,image/jpeg,image/png,image/bmp,image/jpg"
+              ></vue-upload-multiple-image>
+              <span class="btn btn-info" v-on:click="testPost">TES POST</span>
               <div class="form-group">
                 <input
                   type="text"
                   class="form-control"
                   v-model="name"
-                  placeholder="Judul Buku"  
+                  placeholder="Judul Buku"
                   required
                 />
               </div>
@@ -211,6 +234,7 @@
   </div>
 </template>
 <script>
+import VueUploadMultipleImage from "vue-upload-multiple-image";
 export default {
   data() {
     return {
@@ -228,24 +252,31 @@ export default {
       genre: [],
       selgenre: [],
       s: "",
+      images: [],
+      imagesArr:[],
+      baseimg:""
     };
   },
+  components: {
+    VueUploadMultipleImage
+  },
   methods: {
-    commafy( num ) {
-      var str = Number(num).toLocaleString().split('.');
+    commafy(num) {
+      var str = Number(num).toLocaleString().split(".");
       if (str[0].length >= 5) {
-          str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+        str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, "$1,");
       }
       if (str[1] && str[1].length >= 5) {
-          str[1] = str[1].replace(/(\d{3})/g, '$1 ');
+        str[1] = str[1].replace(/(\d{3})/g, "$1 ");
       }
-      return str.join('.');
+      return str.join(".");
     },
     replaceByDefault(e) {
-      e.target.src = 'https://mdbootstrap.com/img/Photos/Horizontal/City/4-col/img%20(60).jpg'
+      e.target.src =
+        "https://mdbootstrap.com/img/Photos/Horizontal/City/4-col/img%20(60).jpg";
     },
-    detail(id){
-      this.$router.push('/detail/'+id)
+    detail(id) {
+      this.$router.push("/detail/" + id);
     },
     addProduct() {
       $(".bd-example-modal-lg").modal("show");
@@ -277,9 +308,28 @@ export default {
     deleteGenre(index) {
       this.selgenre.splice(index, 1);
     },
+    testPost(){
+      this.axios
+        .post("/tes", form)
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     submitBook() {
       $("#addBook :input").prop("disabled", true);
       let form = new FormData();
+      let defim = 0;
+      if(this.imagesArr.length>0){
+        this.imagesArr.forEach(function(value,i){
+          form.append("image["+i+"]", value.path);
+          if(value.default==1){
+            form.append("default", i);
+          }
+        });
+      }
       form.append("name", this.name);
       form.append("description", this.description);
       form.append("writter", this.writter);
@@ -306,13 +356,41 @@ export default {
           $("#addBook :input").prop("disabled", false);
         });
     },
+    uploadImageSuccess(formData, index, fileList) {
+      console.log('data', formData, index, fileList)
+      this.imagesArr = fileList;
+      // Upload image api
+      // axios.post('http://your-url-upload', formData).then(response => {
+      //   console.log(response)
+      // })
+    },
+    beforeRemove (index, done, fileList) {
+      console.log('index', index, fileList)
+      var r = confirm("remove image")
+      if (r == true) {
+        done()
+      } else {
+      }
+    },
+    editImage (formData, index, fileList) {
+      console.log('edit data', formData, index, fileList)
+    },
   },
   mounted() {
+    this.baseimg=process.env.VUE_APP_ROOT_IMAGE;
     this.getBook();
   },
 };
 </script>
 <style scoped>
+.card-img-top{
+  display: block;
+  max-width:100%;
+  max-height:130px;
+  width: auto;
+  height: auto;
+
+}
 .price-group {
   overflow: hidden;
   padding-top: 1px;

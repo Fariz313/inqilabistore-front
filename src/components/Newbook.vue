@@ -5,7 +5,7 @@
         <img
           v-if="book.photo !== null"
           class="card-img-top"
-          :src="book.photo"
+          :src="baseImg+book.photo"
           alt="Card image cap"
         />
         <img
@@ -35,7 +35,8 @@ export default {
   },
   data(){
     return{
-      urls:'hae'
+      urls:'hae',
+      baseImg:process.env.VUE_APP_ROOT_IMAGE
     }
   },
   computed:{

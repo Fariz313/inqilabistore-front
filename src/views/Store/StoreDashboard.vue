@@ -19,7 +19,8 @@
                 <h3 class="small-h3 mb-0">
                   {{kota}}
                 </h3>
-                <a class="small mb-0"><strong>@{{ uname }}</strong> th {{name}}</a>
+                <a class="small mb-0 d-block"><strong>@{{ uname }}</strong> {{name}}</a>
+                <a class="small mb-0 d-block">{{store.contact}}</a>
               </div>
             </div>
           </div>
@@ -81,7 +82,8 @@ export default {
       this.axios
         .get("store/show/" + this.$route.params.id, conf)
         .then((response) => {
-            this.store = response.data.store
+            this.store = response.data.store;
+            console.log(response.data);
             this.kota = this.wilayah[this.store.kode_provinsi].regencies[this.store.kode_kota].name;
             this.name = this.store.user.name;
             this.uname = this.store.user.uname;

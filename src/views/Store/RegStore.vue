@@ -34,13 +34,11 @@
                 </div>
                 <div class="form-group">
                   <label for="description">Kontak</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="description"
+                  <vue-phone-number-input
+                    required
                     v-model="contact"
-                    rows="4"
-                    placeholder="Masukan Nomor Telepon Anda"
+                    color="red"
+                    v-on:update="onUpdate"
                   />
                 </div>
                 <div class="d-flex flex-column mx-auto form-group">
@@ -118,17 +116,23 @@
                     v-model="alamat"
                     placeholder="Alamat"
                   ></textarea>
-                  <textarea
+                  <!-- <textarea
                     class="form-control"
                     cols="30"
                     rows="5"
                     v-model="catatan"
                     placeholder="Catatan"
-                  ></textarea>
+                  ></textarea> -->
                 </div>
                 <div class="d-flex">
-                  <button type="submit" class="btn btn-success">Submit</button>
-                  <button class="btn btn-danger ml-3">Cancel</button>
+                  <button
+                    type="submit"
+                    :disabled="isDisabled"
+                    class="btn btn-success"
+                  >
+                    Submit
+                  </button>
+                  <a class="btn btn-danger ml-3">Cancel</a>
                 </div>
               </form>
             </div>
@@ -158,48 +162,55 @@ export default {
       kec: 0,
       desa: 0,
       kodepos: 0,
+      rawPhone: [],
       alamat: "",
       catatan: "",
       contact: "",
+      isDisabled: false,
     };
   },
   computed: {},
   methods: {
     check() {
-      let conf = { headers: { Authorization: "Bearer " + this.key } }
+      let conf = { headers: { Authorization: "Bearer " + this.key } };
       this.key = localStorage.getItem("Authorization");
       this.axios
-        .get("/store/ishavestore")
+        .get("/store/ishavestore", conf)
         .then((response) => {
           console.log(response);
-
         })
         .catch((err) => {
-          if(err.response.status == 403){
+          if (err.response.status == 403) {
             console.log(err.response.data.id);
-            this.$router.push("/store/"+err.response.data.id);
-          }else{
+            this.$router.push("/store/" + err.response.data.id);
+          } else {
             this.$router.push("/");
           }
         });
     },
+    onUpdate(payload) {
+      this.rawPhone = payload;
+    },
     Submit() {
+      this.isDisabled = true;
       let form = new FormData();
       form.append("store_name", this.storeName);
       form.append("kode_provinsi", this.prov);
       form.append("kode_kota", this.kota);
       form.append("kode_kecamatan", this.kec);
       form.append("kode_desa", this.desa);
-      form.append("address", this.password_confirmation);
-      form.append("catatan", this.catatan);
-      form.append("contact", this.contact);
+      form.append("kode_pos", this.kodepos);
+      form.append("address", this.address);
+      form.append("description", this.description);
+      form.append("contact", this.rawPhone.formattedNumber);
       this.axios
         .post("/store", form)
         .then((response) => {
-          console.log("berhasil");
+          this.check();
+          this.$router.push("/profile");
         })
         .catch((err) => {
-          console.log("error");
+          this.isDisabled = false;
         });
     },
     selectProv() {
@@ -220,7 +231,9 @@ export default {
     },
   },
   mounted() {
+    this.key = this.key = localStorage.getItem("Authorization");
     this.check();
+    this.selectProv();
   },
 };
 </script>

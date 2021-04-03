@@ -2,9 +2,9 @@
   <div class="w-100 mt-5 pt-5 mx-0 px-5">
     <div class="row mx-0 pt-4">
       <div class="col-8">
-        <div class="card rounded border-white shadow-sm">
+        <div class="card rounded border-light shadow">
           <div class="card-header bg-prim">
-            <h3 class="text-light">Cart</h3>
+            <h3 class="text-light">Cart {{ongkirPrice}}</h3>
           </div>
           <div class="card-body">
             <ul class="list-group">
@@ -21,6 +21,8 @@
                       name="radio-store"
                       :value="index"
                       v-model="selectedStore"
+                      :disabled="isLoading"
+                      v-on:change="ongkirPrice=null"
                     />
                   </h5>
                 </div>
@@ -39,6 +41,7 @@
                             v-if="selectedStore == index"
                             v-on:change="check"
                             v-model="selected[cindex]"
+                            :disabled="isLoading"
                           />
                         </div>
                         <div class="col-2">
@@ -99,6 +102,7 @@
                             class="form-control d-inline w-25"
                             type="number"
                             v-model="citem.count"
+                            :disabled="isLoading"
                           />
                           <button
                             v-on:click="deleteCart(citem.id)"
@@ -117,11 +121,47 @@
         </div>
       </div>
       <div class="col-4">
-        <div class="card rounded border-white shadow-sm">
+        <div class="card rounded border-light shadow">
           <div class="card-header bg-scon">
             <h3 class="text-light">Checkout</h3>
           </div>
           <div class="card-body">
+            <p>Pilih Alamat Pengiriman</p>
+            <ul class="list-group">
+              <li
+                class="list-group-item px-1"
+                v-for="(item, index) in address"
+                :key="item.id"
+              >
+                <div class="row mx-0">
+                  <div class="col-2 d-flex">
+                    <span class="my-auto mr-2">{{ index + 1 }}</span>
+                    <input
+                      class="my-auto mr-2"
+                      name="idaddress"
+                      type="radio"
+                      :value="index"
+                      :disabled="isLoading"
+                      v-model="address_id"
+                      v-on:change="ongkirPrice=null"
+
+                    />
+                  </div>
+                  <div class="col-8 d-flex flex-column">
+                    <small
+                      >{{
+                        wilayah[item.kode_provinsi].regencies[item.kode_kota]
+                          .name
+                      }},
+                      {{ wilayah[item.kode_provinsi].name }}
+                    </small>
+                    <p>
+                      {{ item.alamat }}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            </ul>
             <h3>
               {{ getStore(selectedStore) }}
             </h3>
@@ -133,7 +173,12 @@
                 :key="index"
               >
                 <div class="row mx-0 d-flex justify-content-between">
-                  <h6>{{ cart[selectedStore].cart[item].name }} <span class="text-secondary">x {{ cart[selectedStore].cart[item].count}} </span></h6>
+                  <h6>
+                    {{ cart[selectedStore].cart[item].name }}
+                    <span class="text-secondary"
+                      >x {{ cart[selectedStore].cart[item].count }}
+                    </span>
+                  </h6>
                   <div>
                     <h5>
                       Rp.
@@ -149,12 +194,51 @@
                   </div>
                 </div>
               </li>
-              <li class="list-group-item">
-                <div class="row mx-0 d-flex justify-content-between align-items-center">
-                  <button class="btn btn-info" v-on:click="getongkir">Check Ongkir</button>
-                  <pre class="m-0">{{ongkir}}</pre>
+              <li class="list-group-item p-0">
+                <h6>Ongkir</h6>
+                <div v-if="ongkir">
+                  <ul class="list-group p-0">
+                    <li class="list-group-item p-0">
+                      <h6>{{ongkir.rajaongkir.results[0].name}}</h6>
+                    </li>
+                    <li
+                      class="list-group-item p-0"
+                      v-for="(item, index) in ongkir.rajaongkir.results[0].costs"
+                      :key="index"
+                    >
+                      <div class="row mx-0 d-flex justify-content-between">
+                        <div class="input-group-prepend">
+                          <div class="input-group-text">
+                            <input
+                              type="radio"
+                              aria-label="Radio button for following text input"
+                              v-model="ongkirPrice"
+                              :value="item.cost[0].value" m
+                            />
+                          </div>
+                        </div>
+                        <div class="d-flex flex-column text-center">
+                          <!-- <p>cok</p> -->
+                          <p>{{item.service}}</p>
+                          <p>{{item.description}}</p>
+                          <p>Rp.{{commafy(item.cost[0].value)}}</p>
+                        </div>
+                        <div></div>
+                      </div>
+                    </li>
+                  </ul>
+                  <!-- <h5 v-if="ongkir.rajaongkir.results.length > 0">
+                        {{ ongkir.rajaongkir.results }}
+                      </h5>
+                      <h5 v-else>
+                        <h1>Kurir ini tidak tersedia coba Kurir Lain</h1>
+                      </h5> -->
                 </div>
-              </li> 
+                <h5 v-else>Check ongkir terlebih dahulu</h5>
+                <!-- <pre>
+                        {{dummy}}
+                      </pre> -->
+              </li>
               <li class="list-group-item bg-success">
                 <div class="row mx-0 d-flex justify-content-between">
                   <h6 class="text-white">TOTAL</h6>
@@ -168,34 +252,80 @@
                   </div>
                 </div>
               </li>
-            </ul>
-            <p>Pilih Alamat</p>
-            <ul class="list-group">
-              <li
-                class="list-group-item px-1"
-                v-for="(item, index) in address"
-                :key="item.id"
-              >
-                <div class="row mx-0">
-                  <div class="col-2 d-flex">
-                    <span class="my-auto mr-2">{{ index + 1 }}</span>
-                    <input class="my-auto mr-2" name="idaddress" type="radio" :value="item.id" v-model="address_id" />
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between">
+                  <div class="form-check d-inline">
+                    <input
+                      class="form-check-input"
+                      :disabled="isLoading"
+                      v-model="courier"
+                      :value="'jne'"
+                      type="radio"
+                      id="flexCheckDefault1"
+                      v-on:change="ongkirPrice=null"
+                    />
+                    <label class="form-check-label" for="flexCheckDefault1">
+                      JNE
+                    </label>
                   </div>
-                  <div class="col-8 d-flex flex-column">
-                    <small>{{wilayah[item.kode_provinsi].regencies[item.kode_kota].name}},
-                      {{wilayah[item.kode_provinsi].name}}
-                    </small>
-                    <p>
-                      {{item.alamat}}
-                    </p>
+                  <div class="form-check d-inline">
+                    <input
+                      class="form-check-input"
+                      :disabled="isLoading"
+                      v-model="courier"
+                      :value="'tiki'"
+                      type="radio"
+                      id="flexCheckDefault2"
+                      v-on:change="ongkirPrice=null"
+                    />
+                    <label class="form-check-label" for="flexCheckDefault2">
+                      Tiki
+                    </label>
+                  </div>
+                  <div class="form-check d-inline">
+                    <input
+                      class="form-check-input"
+                      :disabled="isLoading"
+                      v-model="courier"
+                      :value="'pos'"
+                      type="radio"
+                      id="flexCheckDefault3"
+                      v-on:change="ongkirPrice=null"
+
+                    />
+                    <label class="form-check-label" for="flexCheckDefault3">
+                      POS
+                    </label>
                   </div>
                 </div>
               </li>
-              <li class="list-group-item">
-
-              </li>
-              <li class="list-group-item">
-                <button class="btn btn-outline-success w-100">CHECKOUT</button>
+              <li class="list-group-item pt-0">
+                <b-progress
+                  v-if="isLoading"
+                  class="mb-3"
+                  :value="'100'"
+                  :max="'100'"
+                  animated
+                ></b-progress>
+                <div
+                  class="row mx-0 d-flex justify-content-between align-items-center"
+                >
+                  <button
+                    :disabled="isLoading"
+                    class="btn btn-info"
+                    v-on:click="getongkir"
+                  >
+                    Check Ongkir
+                  </button>
+                  <button
+                    class="btn btn-success"
+                    v-on:click="submitCheckout"
+                    :disabled="isLoading||!ongkir||ongkirPrice==null"
+                  >
+                    CHECKOUT
+                  </button>
+                </div>
+                <pre class="m-0">{{ ongkir }}</pre>
               </li>
             </ul>
           </div>
@@ -209,19 +339,23 @@ import region from "./../../../indonesia-region.min.json";
 export default {
   data() {
     return {
-      wilayah:region,
+      wilayah: region,
       key: "",
+      courier: "",
       cart: [],
       address: [],
       address_id: null,
       count: [],
       price: 0,
+      ongkirPrice: null,
       disprice: 0,
       selectedStore: 0,
-      ongkir: "Cek Ongkir ... ",
+      ongkir: "",
       selected: [],
       selectedCount: [],
       selectedCheck: [],
+      isLoading: false,
+      
     };
   },
   computed: {
@@ -235,20 +369,24 @@ export default {
   },
   methods: {
     getAddress() {
+      this.isLoading = true;
       let conf = { headers: { Authorization: "Bearer " + this.key } };
       this.axios
         .get("/login/checkfull", conf)
         .then((response) => {
           this.address = response.data.user.address;
+          this.isLoading = false;
         })
         .catch((error) => {});
     },
     getCart() {
+      this.isLoading = true;
       let conf = { headers: { Authorization: "Bearer " + this.key } };
       this.axios
         .get("/cart", conf)
         .then((response) => {
           this.cart = response.data.data.data;
+          this.isLoading = false;
         })
         .catch((error) => {});
     },
@@ -271,6 +409,7 @@ export default {
       return str.join(".");
     },
     check() {
+      this.ongkirPrice=null
       this.selectedCheck = [];
       this.price = 0;
       this.disprice = 0;
@@ -293,39 +432,68 @@ export default {
     deleteCart(id) {
       let conf = { headers: { Authorization: "Bearer " + this.key } };
       this.axios
-        .delete("/cart/" + id, conf)
+        .delete("/cart" + id, conf)
         .then((response) => {
           this.getCart();
         })
         .catch((error) => {});
     },
-    getongkir(){
+    getongkir() {
+      this.isLoading = true;
       let conf = { headers: { Authorization: "Bearer " + this.key } };
       let form = new FormData();
-      form.append('origin_prov',this.cart[this.selectedStore].kode_provinsi);
-      form.append('origin_kot',this.cart[this.selectedStore].kode_kota);
-      form.append('destination_kot',this.cart[this.selectedStore].kode_kota);
-      form.append('destination_prov',this.cart[this.selectedStore].kode_kota);
-      form.append('courier',"jne");
+      form.append("origin_prov", this.cart[this.selectedStore].kode_provinsi);
+      form.append("origin_kot", this.cart[this.selectedStore].kode_kota);
+      form.append(
+        "destination_kot",
+        this.address[this.address_id].kode_provinsi
+      );
+      form.append("destination_prov", this.address[this.address_id].kode_kota);
+      form.append("courier", this.courier);
       let weight = 0;
-      for (let index = 0; index < this.cart[this.selectedStore].cart.length; index++) {
+      for (
+        let index = 0;
+        index < this.cart[this.selectedStore].cart.length;
+        index++
+      ) {
         weight += this.cart[this.selectedStore].cart[index].weight;
       }
-      form.append('weight',weight);
+      form.append("weight", weight);
       this.axios
         .post("/getongkir", form)
         .then((response) => {
-          console.log(response.data.ongkir.rajaongkir.results);
-          this.ongkir = response.data.ongkir.rajaongkir.results.costs[1].cost[0].value;
-          console.log(this.ongkir);
+          this.ongkir = response.data.ongkir;
+          this.isLoading = false;
         })
-        .catch((error) => {});
+        .catch((error) => {
+          this.isLoading = false;
+        });
     },
+    submitCheckout(){
+      this.isLoading = true;
+      let conf = { headers: { Authorization: "Bearer " + this.key } };
+      let form = new FormData();
+      form.append("address_id", this.address[this.address_id].id );
+      form.append("ongkir", this.ongkirPrice );
+      for (let index = 0; index < this.selectedCheck.length; index++) {
+        form.append("cart["+index+"]", this.cart[this.selectedStore].cart[this.selectedCheck[index]].id);
+      }
+      this.axios
+        .post("/order", form)
+        .then((response) => {
+          this.ongkir = response.data.ongkir;
+          this.$router.push("/order");
+        })
+        .catch((error) => {
+          this.isLoading = false;
+        });
+    }
   },
   mounted() {
     this.key = localStorage.getItem("Authorization");
     this.getCart();
     this.getAddress();
+    // this.isLoading = false;
   },
 };
 </script>

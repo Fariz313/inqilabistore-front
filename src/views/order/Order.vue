@@ -42,13 +42,13 @@
                       </div>
                       <div class="row m-0 d-flex flex-column">
                         <div class="mb-1"> <p class="m-0 text-muted invoice">Resi</p> </div>
-                        <div v-if="resi">{{item.resi}}</div>
+                        <div v-if="item.resi">{{item.resi}}</div>
                         <div v-else>-</div>
                       </div>
                     </div>
                     <div class="row m-0 d-flex justify-content-end">
-                        <button class="mx-1 btn btn-success">Bayar</button>
-                        <button class="mx-1 btn btn-info">Detail</button>
+                        <button v-if="item.status=='pending'" v-on:click="bayar(item.payment_method)" class="mx-1 btn btn-success">Bayar</button>
+                        <!-- <button class="mx-1 btn btn-info">Detail</button> -->
                     </div>
                 </li>
             </ul>
@@ -80,6 +80,9 @@ export default {
     formateDate(date){
         return moment(String(value)).format('MM/DD/YYYY hh:mm')
     },
+    bayar(kode){
+      snap.pay(kode);
+    },
     getData(){
       let conf = { headers: { Authorization: "Bearer " + this.key } };
       this.axios
@@ -97,7 +100,6 @@ export default {
     this.key = localStorage.getItem("Authorization");
     this.axios.defaults.headers.common["Authorization"] = "Bearer " + this.key;
     this.getData();
-    snap.pay('6ff4ec9c-02f1-42e6-bfe1-33510cf3ffea');
   }
 }
 </script>

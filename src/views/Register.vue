@@ -4,8 +4,7 @@
       class="mx-auto text-center py-2 my-2 font-weight-light text-muted"
       style="display: block"
     >
-      <span class="font-weight-bold text-dark">Data Diri</span> - Alamat -
-      Verifikasi Email - Selesai
+      <span class="font-weight-bold text-dark">Data Diri</span> - Alamat - Selesai
     </p>
     <div class="row px-4">
       <div class="card p-3 w-75 mx-auto my-auto">
@@ -138,7 +137,7 @@
           </div>
           <div class="form-group">
               <label for="">Nomor Telepon</label>
-              <VuePhoneNumberInput v-model="yourValue" />
+              <vue-phone-number-input required v-model="phone" color="red" v-on:update="onUpdate" />
           </div>
           <button type="submit" :disabled="disabledSubmit" class="btn btn-primary">Daftar Sekarang</button>
         </form>
@@ -147,6 +146,7 @@
   </div>
 </template>
 <script>
+
 export default {
   data() {
     return {
@@ -160,6 +160,7 @@ export default {
       alert: false,
       alertType: "",
       birth_date:"",
+      rawPhone:"",
       disabledSubmit:false,
     };
   },
@@ -172,7 +173,7 @@ export default {
       let password = this.password;
       let password_confirmation = this.password_confirmation;
       let gender = this.gender;
-      let phone_number = this.phone;
+      let phone_number = this.rawPhone.formattedNumber;
       let birthdate = this.birth_date;
       this.$store
         .dispatch("register", {
@@ -189,7 +190,6 @@ export default {
           this.alert = true;
           this.alertType = "alert-success";
           this.alertText = "Register Berhasil";
-          console.log(this.alertText);
           this.$router.push("/register/address");
         })
         .catch((err) => {
@@ -208,18 +208,13 @@ export default {
           }
         });
     },
-    isNumber: function(evt) {
-      evt = (evt) ? evt : window.event;
-      var charCode = (evt.which) ? evt.which : evt.keyCode;
-      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
-        evt.preventDefault();;
-      } else {
-        return true;
+    onUpdate (payload) {
+        this.rawPhone = payload
       }
-    }
   },
     mounted(){
       this.disabledSubmit = false;
-    }
+    },
+    
 };
 </script>

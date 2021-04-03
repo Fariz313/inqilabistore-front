@@ -56,4 +56,13 @@ body{
 .border-none{
   border: none !important;
 }
+
+.card-img-top{
+  display: block;
+  max-width:100%;
+  max-height:130px;
+  width: auto;
+  height: auto;
+
+}
 </style>

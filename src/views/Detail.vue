@@ -4,25 +4,17 @@
       <div class="main-image-panel mx-auto">
         <img
           class="main-image mx-auto"
-          src="https://www.backscatter.com/ITEM_IMAGES/cn-9520b002_1.jpg?resizeid=6&resizeh=600&resizew=600"
+          :src="baseImg+book.photo"
           alt=""
           srcset=""
         />
       </div>
       <div class="image-list-panel d-flex justify-content-around">
         <img
+          v-for="(item,index) in book.image_book"
+          :key="index"
           class="image-list"
-          src="https://www.backscatter.com/ITEM_IMAGES/cn-9520b002_1.jpg?resizeid=6&resizeh=600&resizew=600"
-          alt=""
-        />
-        <img
-          class="image-list"
-          src="https://www.backscatter.com/ITEM_IMAGES/cn-9520b002_1.jpg?resizeid=6&resizeh=600&resizew=600"
-          alt=""
-        />
-        <img
-          class="image-list"
-          src="https://www.backscatter.com/ITEM_IMAGES/cn-9520b002_1.jpg?resizeid=6&resizeh=600&resizew=600"
+          :src="baseImg+item.path"
           alt=""
         />
       </div>
@@ -88,13 +80,15 @@ export default {
     data(){
         return{
           key:'',
-            book:[],
-            count:0,
+          book:[],
+          count:0,
+          baseImg:process.env.VUE_APP_ROOT_IMAGE,
+
         }
     },
   methods: {
      getData(){
-      this.axios.get("/book"+this.$route.params.id)
+      this.axios.get("/book/"+this.$route.params.id)
       .then(response => {
         this.book = response.data
       })
@@ -106,7 +100,7 @@ export default {
         let conf = { headers: { Authorization: "Bearer " + this.key } };
       let form = new FormData();
       form.append("count", this.count);
-      this.axios.post("/cart"+id,form,conf)
+      this.axios.post("/cart/"+id,form,conf)
       .then(response => {
         console.log("berhasil");
       })
