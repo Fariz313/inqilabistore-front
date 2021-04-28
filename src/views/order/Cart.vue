@@ -4,7 +4,7 @@
       <div class="col-8">
         <div class="card rounded border-light shadow">
           <div class="card-header bg-prim">
-            <h3 class="text-light">Cart {{ongkirPrice}}</h3>
+            <h3 class="text-light">Cart {{ ongkirPrice }}</h3>
           </div>
           <div class="card-body">
             <ul class="list-group">
@@ -22,7 +22,7 @@
                       :value="index"
                       v-model="selectedStore"
                       :disabled="isLoading"
-                      v-on:change="ongkirPrice=null"
+                      v-on:change="ongkirPrice = null"
                     />
                   </h5>
                 </div>
@@ -97,16 +97,24 @@
                             <small>Tambah Catatan</small>
                           </button>
                         </div>
-                        <div class="col-6 d-flex flex-row-reverse">
+                        <div class="col-6 d-flex justify-content-end">
+                          <button
+                            class="btn btn-primary d-inline"
+                            v-on:click="addItem(citem.id)"
+                          >
+                            +
+                          </button>
                           <input
                             class="form-control d-inline w-25"
                             type="number"
                             v-model="citem.count"
-                            :disabled="isLoading"
+                            v-on:click="minItem(citem.id)"
+                            disabled
                           />
+                          <button class="btn btn-primary d-inline">-</button>
                           <button
                             v-on:click="deleteCart(citem.id)"
-                            class="btn btn-outline-danger mr-3"
+                            class="btn btn-outline-danger ml-1"
                           >
                             <i class="fas fa-trash-alt"></i>
                           </button>
@@ -143,8 +151,7 @@
                       :value="index"
                       :disabled="isLoading"
                       v-model="address_id"
-                      v-on:change="ongkirPrice=null"
-
+                      v-on:change="ongkirPrice = null"
                     />
                   </div>
                   <div class="col-8 d-flex flex-column">
@@ -199,11 +206,12 @@
                 <div v-if="ongkir">
                   <ul class="list-group p-0">
                     <li class="list-group-item p-0">
-                      <h6>{{ongkir.rajaongkir.results[0].name}}</h6>
+                      <h6>{{ ongkir.rajaongkir.results[0].name }}</h6>
                     </li>
                     <li
                       class="list-group-item p-0"
-                      v-for="(item, index) in ongkir.rajaongkir.results[0].costs"
+                      v-for="(item, index) in ongkir.rajaongkir.results[0]
+                        .costs"
                       :key="index"
                     >
                       <div class="row mx-0 d-flex justify-content-between">
@@ -213,15 +221,16 @@
                               type="radio"
                               aria-label="Radio button for following text input"
                               v-model="ongkirPrice"
-                              :value="item.cost[0].value" m
+                              :value="item.cost[0].value"
+                              m
                             />
                           </div>
                         </div>
                         <div class="d-flex flex-column text-center">
                           <!-- <p>cok</p> -->
-                          <p>{{item.service}}</p>
-                          <p>{{item.description}}</p>
-                          <p>Rp.{{commafy(item.cost[0].value)}}</p>
+                          <p>{{ item.service }}</p>
+                          <p>{{ item.description }}</p>
+                          <p>Rp.{{ commafy(item.cost[0].value) }}</p>
                         </div>
                         <div></div>
                       </div>
@@ -262,7 +271,7 @@
                       :value="'jne'"
                       type="radio"
                       id="flexCheckDefault1"
-                      v-on:change="ongkirPrice=null"
+                      v-on:change="ongkirPrice = null"
                     />
                     <label class="form-check-label" for="flexCheckDefault1">
                       JNE
@@ -276,7 +285,7 @@
                       :value="'tiki'"
                       type="radio"
                       id="flexCheckDefault2"
-                      v-on:change="ongkirPrice=null"
+                      v-on:change="ongkirPrice = null"
                     />
                     <label class="form-check-label" for="flexCheckDefault2">
                       Tiki
@@ -290,8 +299,7 @@
                       :value="'pos'"
                       type="radio"
                       id="flexCheckDefault3"
-                      v-on:change="ongkirPrice=null"
-
+                      v-on:change="ongkirPrice = null"
                     />
                     <label class="form-check-label" for="flexCheckDefault3">
                       POS
@@ -302,7 +310,7 @@
               <li class="list-group-item pt-0">
                 <b-progress
                   v-if="isLoading"
-                  class="mb-3"
+                  class="my-5"
                   :value="'100'"
                   :max="'100'"
                   animated
@@ -320,7 +328,7 @@
                   <button
                     class="btn btn-success"
                     v-on:click="submitCheckout"
-                    :disabled="isLoading||!ongkir||ongkirPrice==null"
+                    :disabled="isLoading || !ongkir || ongkirPrice == null"
                   >
                     CHECKOUT
                   </button>
@@ -355,7 +363,6 @@ export default {
       selectedCount: [],
       selectedCheck: [],
       isLoading: false,
-      
     };
   },
   computed: {
@@ -409,7 +416,7 @@ export default {
       return str.join(".");
     },
     check() {
-      this.ongkirPrice=null
+      this.ongkirPrice = null;
       this.selectedCheck = [];
       this.price = 0;
       this.disprice = 0;
@@ -432,7 +439,25 @@ export default {
     deleteCart(id) {
       let conf = { headers: { Authorization: "Bearer " + this.key } };
       this.axios
-        .delete("/cart" + id, conf)
+        .delete("/cart/" + id, conf)
+        .then((response) => {
+          this.getCart();
+        })
+        .catch((error) => {});
+    },
+    addItem($id) {
+      let conf = { headers: { Authorization: "Bearer " + this.key } };
+      this.axios
+        .delete("/cart/" + id, conf)
+        .then((response) => {
+          this.getCart();
+        })
+        .catch((error) => {});
+    },
+    minItem($id) {
+      let conf = { headers: { Authorization: "Bearer " + this.key } };
+      this.axios
+        .delete("/cart/" + id, conf)
         .then((response) => {
           this.getCart();
         })
@@ -440,43 +465,64 @@ export default {
     },
     getongkir() {
       this.isLoading = true;
-      let conf = { headers: { Authorization: "Bearer " + this.key } };
-      let form = new FormData();
-      form.append("origin_prov", this.cart[this.selectedStore].kode_provinsi);
-      form.append("origin_kot", this.cart[this.selectedStore].kode_kota);
-      form.append(
-        "destination_kot",
-        this.address[this.address_id].kode_provinsi
-      );
-      form.append("destination_prov", this.address[this.address_id].kode_kota);
-      form.append("courier", this.courier);
-      let weight = 0;
-      for (
-        let index = 0;
-        index < this.cart[this.selectedStore].cart.length;
-        index++
-      ) {
-        weight += this.cart[this.selectedStore].cart[index].weight;
+      if (this.address_id !== "" && this.address_id !== null) {
+        if (this.courier !== "" && this.courier !== null) {
+          let conf = { headers: { Authorization: "Bearer " + this.key } };
+          let form = new FormData();
+          form.append(
+            "origin_prov",
+            this.cart[this.selectedStore].kode_provinsi
+          );
+          form.append("origin_kot", this.cart[this.selectedStore].kode_kota);
+          form.append(
+            "destination_kot",
+            this.address[this.address_id].kode_provinsi
+          );
+          form.append(
+            "destination_prov",
+            this.address[this.address_id].kode_kota
+          );
+          form.append("courier", this.courier);
+          let weight = 0;
+          for (
+            let index = 0;
+            index < this.cart[this.selectedStore].cart.length;
+            index++
+          ) {
+            weight += this.cart[this.selectedStore].cart[index].weight;
+          }
+          form.append("weight", weight);
+          this.axios
+            .post("/getongkir", form)
+            .then((response) => {
+              this.ongkir = response.data.ongkir;
+              this.isLoading = false;
+            })
+            .catch((error) => {
+              this.isLoading = false;
+            });
+        } else {
+          this.isLoading = false;
+          alert("Pilih Alamat dan Kurir terlebih Dahulu");
+          return;
+        }
+      } else {
+        this.isLoading = false;
+        alert("Pilih Alamat dan Kurir terlebih Dahulu");
+        return;
       }
-      form.append("weight", weight);
-      this.axios
-        .post("/getongkir", form)
-        .then((response) => {
-          this.ongkir = response.data.ongkir;
-          this.isLoading = false;
-        })
-        .catch((error) => {
-          this.isLoading = false;
-        });
     },
-    submitCheckout(){
+    submitCheckout() {
       this.isLoading = true;
       let conf = { headers: { Authorization: "Bearer " + this.key } };
       let form = new FormData();
-      form.append("address_id", this.address[this.address_id].id );
-      form.append("ongkir", this.ongkirPrice );
+      form.append("address_id", this.address[this.address_id].id);
+      form.append("ongkir", this.ongkirPrice);
       for (let index = 0; index < this.selectedCheck.length; index++) {
-        form.append("cart["+index+"]", this.cart[this.selectedStore].cart[this.selectedCheck[index]].id);
+        form.append(
+          "cart[" + index + "]",
+          this.cart[this.selectedStore].cart[this.selectedCheck[index]].id
+        );
       }
       this.axios
         .post("/order", form)
@@ -487,7 +533,7 @@ export default {
         .catch((error) => {
           this.isLoading = false;
         });
-    }
+    },
   },
   mounted() {
     this.key = localStorage.getItem("Authorization");

@@ -7,7 +7,7 @@
           <div class="p-4 bg-prim">
             <div class="media align-items-end profile-header">
               <div class="profile mr-3">
-                <div class="photoProfile" v-bind:style="pProfile"></div>
+                <div v-on:click="$refs['modal-photo'].show()" class="photoProfile" v-bind:style="pProfile"></div>
                 <a
                   v-on:click="editMode = !editMode"
                   class="btn btn-dark btn-sm btn-block"
@@ -23,7 +23,8 @@
                     verifStatusText
                   }}</span>
                 </p>
-                <router-link to="/register/store"><p class="small mb-2"><span class="badge badge-warning">Buat Toko</span></p></router-link>
+                <router-link v-if="user.store==null" to="/register/store"><p class="small mb-2"><span class="badge badge-warning">Buat Toko</span></p></router-link>
+                <router-link v-else :to="'/store/'+user.store.id"><p class="small mb-2"><span class="badge badge-warning">{{user.store.store_name}}</span></p></router-link>
               </div>
             </div>
           </div>
@@ -223,18 +224,24 @@
         <!-- End profile widget -->
       </div>
     </div>
+    <b-modal ref="modal-photo" id="modal-photo" size="xl" title="Ganti Photo Profile">
+      <UploadFoto :photo="photoProfile"/>
+    </b-modal>
   </div>
 </template>
 <script>
 import region from "./../../indonesia-region.min.json";
+import UploadFoto from "@/views/Tes.vue";
 
 export default {
+  components:{
+    UploadFoto
+  },
   data() {
     return {
       key: "",
       user: [],
-      photoProfile:
-        "https://images.theconversation.com/files/350865/original/file-20200803-24-50u91u.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1200&h=675.0&fit=crop",
+      photoProfile:"https://images.theconversation.com/files/350865/original/file-20200803-24-50u91u.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1200&h=675.0&fit=crop",
       isEmailVerified: false,
       userAddress: [],
       isAddAddress: false,
@@ -261,6 +268,7 @@ export default {
       key: "",
       response: [],
       //---------------
+      photoLink:process.env.VUE_APP_ROOT_STORAGE+'photo_image/',
     };
   },
   computed: {
@@ -296,6 +304,9 @@ export default {
           this.birthdate = this.user.birthdate;
           this.gender = this.user.gender;
           this.phone = this.user.phone_number;
+          if(this.user.photo !== '' && this.user.photo !== null){
+            this.photoProfile = this.photoLink+this.user.photo
+          }
           console.log(this.userAddress);
         })
         .catch((error) => {
@@ -419,6 +430,7 @@ export default {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
+  cursor: pointer;
 }
 table{
     min-width: none;

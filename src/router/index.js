@@ -13,6 +13,7 @@ import RegStore from '../views/Store/RegStore.vue'
 import StoreDashboard from '../views/Store/StoreDashboard.vue'
 import Cart from '../views/order/Cart.vue'
 import Order from '../views/order/Order.vue'
+import Tes from '../views/Tes.vue'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/',
     name: 'Home',
     components:{default:Home,nav:Nav} 
+  },
+  {
+    path: '/tes',
+    name: 'Tes',
+    components:{default:Tes,} 
   },
   {
     path: '/about',

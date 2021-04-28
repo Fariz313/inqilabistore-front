@@ -9,9 +9,11 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import VuePhoneNumberInput from 'vue-phone-number-input';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
-import VueLazyload from 'vue-lazyload'
- 
+import VueLazyload from 'vue-lazyload';
+import moment from 'moment';
 
+ 
+Vue.use(require('vue-moment'));
 Vue.use(VueLazyload) 
 Vue.component('vue-phone-number-input', VuePhoneNumberInput);
 Vue.config.productionTip = false

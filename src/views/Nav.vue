@@ -56,9 +56,11 @@
         >
           <div class="col-2 p-0">
             <img
-              src="https://github.githubassets.com/images/modules/octocats/supportcat.jpg"
+              v-if="this.$store.state.user.photo"
+              :src="photoLink+this.$store.state.user.photo"
               height="25px"
               alt=""
+              class="rounded-circle"
             />
           </div>
           <div class="col-10 p-0">
@@ -85,7 +87,47 @@
     </nav>
   </div>
 </template>
-
+<script>
+export default {
+  data() {
+    return {
+      isLoggedIn: false,
+      name: "name",
+      search:"",
+      photoLink:process.env.VUE_APP_ROOT_STORAGE+'photo_image/',
+    };
+  },
+  methods: {
+    logout(){
+      this.$store.dispatch('logout').then((response) => {
+          location.href = "/"
+        })
+        .catch((err) => {
+          location.href = "/"});
+      
+    },
+    tosearch(){
+    if(this.search !== undefined || this.search !== null || this.search !== ""){
+      if(this.$router.currentRoute.path !== '/search'){
+        this.$router.push({ path: 'search', query: { search: this.search } });
+      }
+      else if(this.$router.query.search !== this.search){
+        window.href="/search?search="+this.search;
+      }
+    }
+  }
+  },
+  mounted() {
+    if (this.$store.getters.isLoggedIn) {
+      this.isLoggedIn = true;
+      if(this.$store.state.user){
+        this.name = this.$store.state.user.name;
+      }
+    }
+  },
+  
+};
+</script>
 <style lang="scss">
 .navcon {
   height: 32px;
@@ -199,43 +241,3 @@ select:focus {
   }
 }
 </style>
-<script>
-export default {
-  data() {
-    return {
-      isLoggedIn: false,
-      name: "name",
-      search:"",
-    };
-  },
-  methods: {
-    logout(){
-      this.$store.dispatch('logout').then((response) => {
-          location.href = "/"
-        })
-        .catch((err) => {
-          location.href = "/"});
-      
-    },
-    tosearch(){
-    if(this.search !== undefined || this.search !== null || this.search !== ""){
-      if(this.$router.currentRoute.path !== '/search'){
-        this.$router.push({ path: 'search', query: { search: this.search } });
-      }
-      else if(this.$router.query.search !== this.search){
-        window.href="/search?search="+this.search;
-      }
-    }
-  }
-  },
-  mounted() {
-    if (this.$store.getters.isLoggedIn) {
-      this.isLoggedIn = true;
-      if(this.$store.state.user){
-        this.name = this.$store.state.user.name;
-      }
-    }
-  },
-  
-};
-</script>

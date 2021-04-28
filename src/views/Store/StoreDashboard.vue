@@ -29,10 +29,12 @@
               <div class="card-header bg-prim link-head py-2">
                 <a class="p-3" v-on:click="nav='product'" v-bind:class="{active : nav === 'product'}" >Produk</a>
                 <a class="p-3" v-on:click="nav='detail'"  v-bind:class="{active : nav === 'detail'}" >Detail Toko</a>
+                <a class="p-3" v-on:click="nav='order'"  v-bind:class="{active : nav === 'order'}" >Order Toko</a>
               </div>
               <div class="card-body">
                 <Product v-if="nav==='product'"/>
                 <Detail :store="store" v-if="nav==='detail'"/>
+                <Order v-if="nav==='order'"/>
               </div>
             </div>
           </div>
@@ -46,10 +48,11 @@
 import region from "./../../../indonesia-region.min.json";
 import Product from "./Component/Product.vue";
 import Detail from "./Component/Detail.vue";
+import Order from "../order/OrderStore.vue";
 
 export default {
   components:{
-    Product,Detail
+    Product,Detail,Order
   },
   data() {
     return {
